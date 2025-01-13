@@ -100,30 +100,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "/config": {
-            "get": {
-                "description": "Get the config for server",
-                "consumes": [
-                    "*/*"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "root"
-                ],
-                "summary": "Config endpoint",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": true
-                        }
-                    }
-                }
-            }
         }
     },
     "securityDefinitions": {

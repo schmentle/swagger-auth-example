@@ -5,7 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/schmentle/swagger-auth-example/middleware"
-	"net/http"
 	"os"
 	"time"
 
@@ -40,11 +39,9 @@ func main() {
 	// Fiber instance
 	app := fiber.New()
 
-	// Middleware
 	app.Use(recover.New())
 	app.Use(cors.New())
 
-	// Routes
 	app.Get("/", HealthCheck)
 
 	swaggerDocURL := os.Getenv("SWAGGER_DOC_URL")
@@ -62,15 +59,10 @@ func main() {
 		secret = "your_secret_key"
 	}
 
-	app.Get("/config", func(c *fiber.Ctx) error {
-		return Config(c, swaggerDocURL, authApiUrl)
-	})
-
 	app.Post("/auth", func(c *fiber.Ctx) error {
 		return Auth(c, secret)
 	})
 
-	// Protected routes
 	protected := app.Group("/api", middleware.JWTAuth(secret))
 
 	protected.Get("/profile", Profile)
@@ -79,9 +71,11 @@ func main() {
 		return c.SendFile("./docs/swagger.json")
 	})
 
-	app.Get("/swagger/*", adaptor.HTTPHandler(http.StripPrefix("/swagger/", swagger.ServeSwaggerUI())))
+	app.Get("/swagger/*", adaptor.HTTPHandler(swagger.ServeSwaggerUI(swagger.SwaggerConfig{
+		SwaggerDocURL: swaggerDocURL,
+		AuthURL:       authApiUrl,
+	})))
 
-	// Start Server
 	if err := app.Listen(":8080"); err != nil {
 		log.Fatal(err)
 	}
@@ -134,28 +128,6 @@ func Auth(c *fiber.Ctx, secret string) error {
 	}
 
 	return c.JSON(fiber.Map{"access_token": tokenString})
-}
-
-// Config godoc
-// @Summary Config endpoint
-// @Description Get the config for server
-// @Tags root
-// @Accept */*
-// @Produce json
-// @Success 200 {object} map[string]interface{}
-// @Router /config [get]
-func Config(c *fiber.Ctx, swaggerDocURL string, authApiUrl string) error {
-	res := map[string]interface{}{
-		"data":          "Server is up and running",
-		"swaggerDocURL": swaggerDocURL,
-		"authApiUrl":    authApiUrl,
-	}
-
-	if err := c.JSON(res); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 // HealthCheck godoc

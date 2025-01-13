@@ -16,3 +16,6 @@ Required to use the package: github.com/schmentle/go-swagger-auth-form
     ```
 3. Open the browser and navigate to [http://localhost:3000/swagger/index.html](http://localhost:3000/swagger/index.html)
 
+Example screenshot of the form generated:
+
+![Local image](./images/swagger-auth-login-form-example.png)

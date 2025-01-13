@@ -63,22 +63,6 @@ paths:
       summary: Authenticate a user
       tags:
       - root
-  /config:
-    get:
-      consumes:
-      - '*/*'
-      description: Get the config for server
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-      summary: Config endpoint
-      tags:
-      - root
 schemes:
 - http
 securityDefinitions:
